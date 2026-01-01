@@ -6,10 +6,10 @@ Priority-ordered list of tasks. Top = highest priority.
 
 - [ ] **Docker Compose Primary Implementation** ⭐ NEW PRIORITY
   - See: decisions/002-docker-compose-primary.md
-  - Replace tmux with Docker containers
+  - Replace tmux with Docker containers - or containers + tmux? how can we keep remote monitoring & interaction with claude code from Blink Shell iOS app, etc. ?
   - Orchestrator as container
   - Agent containers (one per project)
-  - PostgreSQL for state
+  - PostgreSQL for state - Or SQLite file is just fine, if it can work in a shared volume.
   - CSV priority file
   - System service via docker-compose
 
