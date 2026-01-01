@@ -1,0 +1,36 @@
+# CTO Sidekick Configuration
+# Copy to config.yaml and customize
+
+# Google Sheets integration
+sheets:
+  credentials_file: ./credentials/sheets-api.json
+  spreadsheet_name: "CTO Sidekick - Projects"
+  worksheet_name: "Projects"
+  sync_interval: 60  # seconds between Sheet checks
+
+# Project directories (where your code lives)
+projects:
+  # Map sheet project names to local directories
+  "Antenna ML Pipeline": /home/michael/Projects/antenna
+  "APRS Audio Tools": /home/michael/Projects/aprs-tools
+  "eButterfly Export": /home/michael/Projects/ebutterfly
+  "Pipecat Voice": /home/michael/Projects/pipecat
+
+# Agent configuration
+agents:
+  claude:
+    enabled: true
+    max_concurrent: 1  # How many Claude sessions at once
+    use_tmux: true     # Run Claude in tmux sessions (recommended)
+    # Additional args to pass to claude (e.g., --dangerously-skip-permissions)
+    extra_args: []
+
+# Scheduler settings
+scheduler:
+  check_interval: 60  # seconds
+  auto_resume: true   # Resume after agent completes
+
+# State tracking
+state:
+  state_file: ./state/orchestrator.json
+  log_file: ./logs/orchestrator.log

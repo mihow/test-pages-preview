@@ -1,5 +1,43 @@
 # Meta Agent Notes - Claude Project Description
 
+## Quick Start (MVP is Ready!)
+
+**Want to get the orchestrator running now?**
+
+```bash
+# Install dependencies
+uv pip install -e .
+
+# Copy and configure
+cp config.yaml.example config.yaml
+nano config.yaml  # Set up your projects and credentials
+
+# Test setup
+python src/test_basic.py
+
+# Run orchestrator
+python src/daemon.py
+```
+
+See **[SETUP.md](SETUP.md)** for detailed instructions including Google Sheets setup.
+
+**What's Working:**
+- ✅ Google Sheets integration for priorities
+- ✅ Auto-start Claude Code on highest priority project
+- ✅ **Runs Claude in tmux sessions** - attach to watch in real-time!
+- ✅ Status updates back to Sheet
+- ✅ Sequential project execution
+- ✅ State tracking and history
+- ✅ **Comprehensive test suite** (13 tests, all passing)
+
+**What's Next:**
+- Multi-model routing (Claude → Qwen → Gemini)
+- VM isolation (per the plan below)
+- Web dashboard
+- Credit monitoring and auto-resume
+
+---
+
 ## Purpose
 
 This project is a knowledge base and active workspace for designing, implementing, and refining autonomous AI agent systems for real-world software development. It documents practical patterns, architectural decisions, and operational strategies for running multiple AI coding agents (Claude Code, local Qwen, Gemini) across diverse projects simultaneously.

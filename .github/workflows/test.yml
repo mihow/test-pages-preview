@@ -1,0 +1,60 @@
+name: Test CTO Sidekick
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+
+    - name: Install dependencies
+      run: |
+        uv pip install --system -e .
+
+    - name: Run scheduler tests
+      run: |
+        python tests/test_scheduler.py
+
+    - name: Run orchestrator integration tests
+      run: |
+        python tests/test_orchestrator.py
+
+    - name: Run workflow tests (status updates, resumption, completion)
+      run: |
+        python tests/test_workflows.py
+
+    - name: Verify project structure
+      run: |
+        test -f src/daemon.py
+        test -f src/scheduler.py
+        test -f src/sheets.py
+        test -f src/models.py
+        test -f config.yaml.example
+        echo "✅ All core files present"
+
+    - name: Test imports
+      run: |
+        python -c "from src.models import Project, ProjectStatus; print('✅ Models import OK')"
+        python -c "from src.scheduler import Scheduler; print('✅ Scheduler import OK')"
+        python -c "from src.mocks import MockSheetsClient; print('✅ Mocks import OK')"
+
+    - name: Validate config example
+      run: |
+        python -c "import yaml; yaml.safe_load(open('config.yaml.example')); print('✅ Config YAML valid')"
