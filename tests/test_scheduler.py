@@ -4,11 +4,11 @@ import sys
 from pathlib import Path
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scheduler import Scheduler
-from models import ProjectStatus
-from mocks import MockProject
+from src.scheduler import Scheduler
+from src.models import ProjectStatus
+from src.mocks import MockProject
 
 
 def test_select_next_project_by_priority():

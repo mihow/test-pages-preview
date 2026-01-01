@@ -7,8 +7,8 @@ from pathlib import Path
 import psutil
 import time
 
-from models import Project
-from runners.base import AgentRunner
+from src.models import Project
+from src.runners.base import AgentRunner
 
 
 logger = logging.getLogger(__name__)

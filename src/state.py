@@ -6,7 +6,7 @@ from pathlib import Path
 from datetime import datetime
 from typing import Any
 
-from models import Project
+from src.models import Project
 
 
 logger = logging.getLogger(__name__)

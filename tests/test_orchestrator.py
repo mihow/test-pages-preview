@@ -5,12 +5,12 @@ from pathlib import Path
 import tempfile
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from models import ProjectStatus
-from mocks import MockProject, MockSheetsClient, MockClaudeRunner
-from scheduler import Scheduler
-from state import StateTracker
+from src.models import ProjectStatus
+from src.mocks import MockProject, MockSheetsClient, MockClaudeRunner
+from src.scheduler import Scheduler
+from src.state import StateTracker
 
 
 def test_orchestrator_flow():

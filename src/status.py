@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-from config import Config
+from src.config import Config
 
 
 def format_timestamp(ts_str: str | None) -> str:

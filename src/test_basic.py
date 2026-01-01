@@ -47,7 +47,7 @@ if config_file.exists():
 
     # Try loading it
     try:
-        from config import Config
+        from src.config import Config
         config = Config()
         print(f"   ✅ Config loads successfully")
         print(f"      Spreadsheet: {config.sheets_spreadsheet_name}")
@@ -62,7 +62,7 @@ else:
 print("\n4. Google Sheets Credentials:")
 if config_file.exists():
     try:
-        from config import Config
+        from src.config import Config
         config = Config()
         creds_file = config.sheets_credentials
         if creds_file.exists():

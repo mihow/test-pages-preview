@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 import logging
 
-from models import Project
+from src.models import Project
 
 
 logger = logging.getLogger(__name__)

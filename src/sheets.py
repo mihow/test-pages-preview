@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 from pathlib import Path
 
-from models import Project, ProjectStatus
+from src.models import Project, ProjectStatus
 
 
 logger = logging.getLogger(__name__)

@@ -3,9 +3,9 @@
 from datetime import datetime
 from pathlib import Path
 
-from models import Project, ProjectStatus
-from runners.base import AgentRunner
-from sheets import SheetsClient
+from src.models import Project, ProjectStatus
+from src.runners.base import AgentRunner
+from src.sheets import SheetsClient
 
 
 class MockProject:

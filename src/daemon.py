@@ -16,12 +16,12 @@ import signal
 import sys
 from pathlib import Path
 
-from config import Config
-from sheets import SheetsClient
-from scheduler import Scheduler
-from runners.claude import ClaudeRunner
-from state import StateTracker
-from models import ProjectStatus
+from src.config import Config
+from src.sheets import SheetsClient
+from src.scheduler import Scheduler
+from src.runners.claude import ClaudeRunner
+from src.state import StateTracker
+from src.models import ProjectStatus
 
 
 # Setup logging

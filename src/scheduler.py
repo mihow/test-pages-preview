@@ -3,7 +3,7 @@
 import logging
 from typing import Optional
 
-from models import Project, ProjectStatus
+from src.models import Project, ProjectStatus
 
 
 logger = logging.getLogger(__name__)
