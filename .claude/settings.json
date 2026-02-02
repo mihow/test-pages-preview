@@ -1,5 +1,4 @@
 {
-  "$schema": "https://claude.ai/schemas/settings.json",
   "mcpServers": {
     "chrome-devtools": {
       "command": "npx",
@@ -17,18 +16,5 @@
         "PYTHONPATH": "${workspaceFolder}/src"
       }
     }
-  },
-  "permissions": {
-    "allow": [
-      "Bash(pytest*)",
-      "Bash(ruff*)",
-      "Bash(mypy*)",
-      "Bash(git status*)",
-      "Bash(git diff*)",
-      "Bash(git log*)",
-      "Bash(git add*)",
-      "Bash(docker compose*)",
-      "Bash(uv pip*)"
-    ]
   }
 }
