@@ -30,7 +30,9 @@ class Settings(BaseSettings):
 
     # Application settings
     app_name: str = Field(default="my-project", description="Application name")
-    app_env: str = Field(default="development", description="Environment (development/staging/production)")
+    app_env: str = Field(
+        default="development", description="Environment (development/staging/production)"
+    )
     debug: bool = Field(default=False, description="Enable debug mode")
 
     # Paths

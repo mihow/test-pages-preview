@@ -21,7 +21,8 @@ def create_parser() -> argparse.ArgumentParser:
         description="A Claude-first Python application",
     )
     parser.add_argument(
-        "-v", "--version",
+        "-v",
+        "--version",
         action="version",
         version=f"%(prog)s {__version__}",
     )

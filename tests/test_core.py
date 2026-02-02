@@ -4,7 +4,6 @@ Tests for core business logic.
 These tests verify the main application functionality.
 """
 
-
 from my_project.core import create_example, process_example, validate_input
 from my_project.models import Status
 

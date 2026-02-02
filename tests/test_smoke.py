@@ -41,7 +41,8 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            check=False,
         )
         assert result.returncode == 0, f"CLI failed: {result.stderr}"
         assert "my-project" in result.stdout.lower() or "version" in result.stdout.lower()
@@ -53,7 +54,8 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            check=False,
         )
         assert result.returncode == 0, f"CLI failed: {result.stderr}"
         assert "success" in result.stdout.lower()
@@ -65,7 +67,8 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            check=False,
         )
         assert result.returncode == 0
         assert "usage" in result.stdout.lower() or "help" in result.stdout.lower()
