@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -47,5 +48,5 @@ class Result(BaseModel):
 
     success: bool
     message: str
-    data: dict | None = None
+    data: dict[str, Any] | None = None
     error: str | None = None
