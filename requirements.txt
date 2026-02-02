@@ -1,5 +1,0 @@
-# Core dependencies for CTO Sidekick MVP
-gspread>=6.0.0           # Google Sheets API
-oauth2client>=4.1.3      # Google OAuth
-pyyaml>=6.0              # Config file parsing
-psutil>=5.9.0            # Process monitoring

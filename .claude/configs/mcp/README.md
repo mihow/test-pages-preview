@@ -2,150 +2,138 @@
 
 Model Context Protocol (MCP) server configurations for Claude Code.
 
-## What is MCP?
-
-MCP enables Claude to interact with external tools and data sources through a standardized protocol.
-
 **Official Docs:** https://modelcontextprotocol.io/
 
-## Active MCP Servers
+## Recommended Servers
 
-Document your actively used MCP servers here.
+This template includes two recommended MCP servers pre-configured for safe, isolated operation.
 
-### Standard Servers
+### 1. Chrome DevTools
+
+Browser automation for UI testing, screenshots, and web interaction.
+
+**Features:**
+- Headless mode (no visible browser window)
+- Isolated profile (no access to your browser data)
+- Sandboxed execution
+
+```json
+{
+  "chrome-devtools": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "@anthropic/mcp-server-chrome-devtools",
+      "--headless",
+      "--isolated"
+    ]
+  }
+}
+```
+
+**Install:**
+```bash
+npm install -g @anthropic/mcp-server-chrome-devtools
+```
+
+### 2. Python Language Server (pylsp)
+
+Enhanced Python intelligence for accurate code navigation.
+
+**Features:**
+- Go-to-definition
+- Find all references
+- Symbol search
+- Hover documentation
+- Real-time diagnostics
+
+```json
+{
+  "pylsp": {
+    "command": "pylsp",
+    "args": [],
+    "env": {
+      "PYTHONPATH": "${workspaceFolder}/src"
+    }
+  }
+}
+```
+
+**Install:**
+```bash
+uv pip install python-lsp-server[all]
+# or
+pip install python-lsp-server[all]
+```
+
+### Alternative: Pyright (Stricter Type Checking)
+
+```json
+{
+  "pyright": {
+    "command": "pyright-langserver",
+    "args": ["--stdio"]
+  }
+}
+```
+
+**Install:**
+```bash
+npm install -g pyright
+```
+
+## Complete Configuration
+
+Add to `.claude/settings.json`:
 
 ```json
 {
   "mcpServers": {
-    "filesystem": {
+    "chrome-devtools": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/allowed/path"]
+      "args": ["-y", "@anthropic/mcp-server-chrome-devtools", "--headless", "--isolated"]
     },
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
+    "pylsp": {
+      "command": "pylsp",
+      "args": [],
       "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+        "PYTHONPATH": "${workspaceFolder}/src"
       }
     }
   }
 }
 ```
 
-### Custom MCP Servers
-
-Add your custom MCP server configs here.
-
-#### Example: Qwen MCP Server
-
-```json
-{
-  "mcpServers": {
-    "qwen": {
-      "command": "npx",
-      "args": ["-y", "mcp-ollama"],
-      "env": {
-        "OLLAMA_HOST": "http://localhost:11434"
-      }
-    }
-  }
-}
-```
-
-## Installation
-
-```bash
-# Copy to Claude config
-cp mcp-config.json ~/.claude/mcp.json
-
-# Or link for version control
-ln -s $(pwd)/mcp-config.json ~/.claude/mcp.json
-```
-
-## Testing MCP Servers
-
-```bash
-# Test MCP server
-npx @modelcontextprotocol/inspector npx -y mcp-ollama
-
-# Debug MCP issues
-claude --verbose
-```
-
-## Available MCP Servers
+## Other Useful Servers
 
 | Server | Purpose | Install |
 |--------|---------|---------|
-| filesystem | File access | `npx @modelcontextprotocol/server-filesystem` |
+| filesystem | Scoped file access | `npx @modelcontextprotocol/server-filesystem` |
 | github | GitHub API | `npx @modelcontextprotocol/server-github` |
-| postgres | Database | `npx @modelcontextprotocol/server-postgres` |
-| puppeteer | Browser automation | `npx @modelcontextprotocol/server-puppeteer` |
+| postgres | Database queries | `npx @modelcontextprotocol/server-postgres` |
 | fetch | HTTP requests | `npx @modelcontextprotocol/server-fetch` |
-| ollama | Local LLMs | `npx mcp-ollama` |
-
-## Custom MCP Server Template
-
-See: [Building MCP Servers](https://modelcontextprotocol.io/docs/building-servers)
-
-```typescript
-// server.ts
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-
-const server = new Server({
-  name: "my-custom-server",
-  version: "1.0.0"
-});
-
-// Define tools
-server.setRequestHandler("tools/list", async () => ({
-  tools: [
-    {
-      name: "my_tool",
-      description: "Does something useful",
-      inputSchema: {
-        type: "object",
-        properties: {
-          input: { type: "string" }
-        }
-      }
-    }
-  ]
-}));
-
-// Handle tool calls
-server.setRequestHandler("tools/call", async (request) => {
-  // Implementation
-});
-
-// Start server
-const transport = new StdioServerTransport();
-await server.connect(transport);
-```
 
 ## Troubleshooting
 
-### MCP Server Not Found
+### Server Not Found
 ```bash
-# Check if installed
 which npx
-npm list -g @modelcontextprotocol/server-filesystem
+which pylsp
+npm list -g @anthropic/mcp-server-chrome-devtools
 ```
 
-### Connection Issues
+### Debug Mode
 ```bash
-# Check Claude logs
-tail -f ~/.claude/logs/mcp.log
-
-# Verbose mode
 claude --verbose
 ```
 
-### Environment Variables
-Make sure required env vars are set:
+### Chrome Issues
 ```bash
-export GITHUB_TOKEN="ghp_..."
-export OLLAMA_HOST="http://localhost:11434"
+# Check Chrome is installed
+which google-chrome || which chromium
+
+# Test headless mode
+npx @anthropic/mcp-server-chrome-devtools --headless --test
 ```
 
 ---
@@ -153,4 +141,3 @@ export OLLAMA_HOST="http://localhost:11434"
 **See Also:**
 - [Official MCP Docs](https://modelcontextprotocol.io/)
 - [Available Servers](https://github.com/modelcontextprotocol/servers)
-- [Building Servers](https://modelcontextprotocol.io/docs/building-servers)

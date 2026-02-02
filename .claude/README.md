@@ -1,145 +1,168 @@
-# Claude Configuration & Resources
+# .claude Directory
 
-This directory contains Claude Code configuration, prompts, templates, and tooling for the CTO Sidekick project.
+This directory contains Claude Code configuration, rules, skills, and agents for AI-assisted development.
 
 ## Directory Structure
 
 ```
 .claude/
-├── README.md                  # This file
-├── instructions.md            # Project-specific Claude instructions
-├── planning/                  # Planning documents
-│   └── meta-agent/           # Meta agent planning
-├── prompts/                   # Reusable prompts
-│   ├── meta/                 # Meta prompts (orchestration, planning)
-│   ├── tasks/                # Task-specific prompts
-│   └── verification/         # Verification & review prompts
-├── templates/                 # Templates for common files
-│   ├── CLAUDE.md            # Latest CLAUDE.md template
-│   ├── instructions.md      # Latest instructions.md template
-│   └── project-setup/       # Project initialization templates
-└── configs/                   # Tool configurations
-    ├── mcp/                  # MCP server configs
-    ├── skills/               # Claude skills
-    └── plugins/              # IDE plugins & extensions
+├── CLAUDE.md              # Main project instructions (loaded every session)
+├── settings.json          # MCP servers and permissions
+├── README.md              # This file
+│
+├── rules/                 # Modular coding rules (auto-loaded)
+│   ├── python-style.md    # Python conventions
+│   ├── testing.md         # Test guidelines
+│   └── docker.md          # Docker best practices
+│
+├── skills/                # Reusable workflows (/skill-name)
+│   ├── fix-issue/         # Fix GitHub issues
+│   ├── tdd/               # Test-driven development
+│   └── review/            # Code review checklist
+│
+├── agents/                # Specialized subagents
+│   ├── security-reviewer.md
+│   └── test-writer.md
+│
+├── configs/               # Tool configurations
+│   └── mcp/               # MCP server documentation
+│
+├── planning/              # Planning documents
+│   ├── decisions/         # Architectural Decision Records (ADRs)
+│   └── features/          # Feature planning
+│
+├── prompts/               # Prompt templates
+│   └── README.md
+│
+├── research/              # Research documentation
+│   └── README.md
+│
+└── docs/                  # Reference documentation
+    ├── high-fidelity/     # Detailed, verified docs
+    └── summaries/         # Quick reference
 ```
 
-## Prompts
-
-### Meta Prompts (`prompts/meta/`)
-System-level prompts for orchestration and decision-making:
-- Task planning analysis
-- Completion verification
-- Stuck detection
-- Test generation
-
-### Task Prompts (`prompts/tasks/`)
-Common task patterns:
-- Feature implementation
-- Bug fixing
-- Refactoring
-- Testing
-- Documentation
-
-### Verification Prompts (`prompts/verification/`)
-Code review and verification:
-- PR review
-- Security audit
-- Performance review
-- Test coverage analysis
-
-## Templates
+## Key Files
 
 ### CLAUDE.md
-Global Claude instructions template (lives in `~/.claude/CLAUDE.md`)
-- Cost optimization practices
-- Development workflows
-- Style guidelines
-- Tool preferences
 
-### instructions.md
-Project-specific instructions (lives in `.claude/instructions.md`)
-- Project context
-- Architecture decisions
-- Coding standards
-- Testing requirements
+Loaded at the start of every Claude Code session. Contains:
+- Project overview and commands
+- Code style guidelines
+- Learnings and gotchas
 
-## Configs
+**Best practice:** Keep it concise. Only include what Claude can't infer from code.
 
-### MCP Servers (`configs/mcp/`)
-Model Context Protocol server configurations:
-- Filesystem server
-- GitHub integration
-- Database connectors
-- Custom APIs
+### settings.json
 
-### Skills (`configs/skills/`)
-Reusable Claude skills:
-- Code review skill
-- Test generation skill
-- Documentation skill
-- Deployment skill
+MCP server configuration and permission allowlists:
+- `chrome-devtools`: Headless browser automation
+- `pylsp`: Python language server
 
-### Plugins (`configs/plugins/`)
-IDE and tooling plugins:
-- VS Code extensions
-- Vim plugins
-- Git hooks
-- Linters & formatters
+### Rules (`rules/`)
+
+Modular, file-scoped instructions. Use YAML frontmatter to scope to paths:
+
+```markdown
+---
+paths:
+  - "src/**/*.py"
+---
+# Python Rules
+...
+```
+
+### Skills (`skills/`)
+
+Reusable workflows invoked with `/skill-name`:
+- `/fix-issue 123` - Fix a GitHub issue
+- `/tdd` - TDD workflow
+- `/review` - Code review checklist
+
+### Agents (`agents/`)
+
+Specialized subagents that run in isolated context:
+- `security-reviewer` - Security vulnerability analysis
+- `test-writer` - Test generation
 
 ## Usage
 
-### Using Prompts
+### View Loaded Memory
 
-```python
-# In code
-from pathlib import Path
-
-def load_prompt(name: str) -> str:
-    """Load a prompt template."""
-    prompt_file = Path(__file__).parent / ".claude" / "prompts" / f"{name}.md"
-    return prompt_file.read_text()
-
-# Example
-verification_prompt = load_prompt("verification/completion-check")
+```
+/memory
 ```
 
-### Using Templates
+Shows all CLAUDE.md files and rules currently loaded.
 
-```bash
-# Copy template to new project
-cp .claude/templates/CLAUDE.md ~/.claude/CLAUDE.md
-cp .claude/templates/instructions.md .claude/instructions.md
+### Invoke a Skill
+
+```
+/fix-issue 123
+/tdd Add email validation
+/review src/core.py
 ```
 
-### Managing Configs
+### Use a Subagent
 
-```bash
-# Link MCP config
-ln -s $(pwd)/.claude/configs/mcp/config.json ~/.claude/mcp.json
+```
+Use the security-reviewer agent to review the auth module.
+Use a subagent to write tests for the new feature.
+```
 
-# Link skills
-ln -s $(pwd)/.claude/configs/skills/* ~/.claude/skills/
+## Adding Content
+
+### New Rule
+
+Create `.claude/rules/my-rule.md`:
+
+```markdown
+---
+paths:
+  - "src/api/**/*.py"
+---
+# API Rules
+
+- Always validate input
+- Return consistent error format
+```
+
+### New Skill
+
+Create `.claude/skills/my-skill/SKILL.md`:
+
+```markdown
+---
+name: my-skill
+description: Does something useful
+---
+# My Skill
+
+Instructions for Claude when this skill is invoked.
+```
+
+### New Agent
+
+Create `.claude/agents/my-agent.md`:
+
+```markdown
+---
+name: my-agent
+description: Specialized for X
+tools: Read, Grep, Glob
+model: sonnet
+---
+You are a specialist in X. Your job is to...
 ```
 
 ## Best Practices
 
-1. **Version Control Prompts**: All prompts in git for evolution tracking
-2. **Template Updates**: Keep templates up-to-date with latest practices
-3. **Config Management**: Standard configs for consistent environments
-4. **Documentation**: Document why prompts work and when to use them
-
-## Contributing
-
-When adding new prompts/templates:
-1. Add clear description and use case
-2. Include example usage
-3. Document parameters/variables
-4. Test before committing
+1. **Keep CLAUDE.md small** - Move details to rules
+2. **Scope rules narrowly** - Use `paths` frontmatter
+3. **Create skills for workflows** - Not just instructions
+4. **Use agents for isolation** - Separate context, focused tasks
+5. **Document learnings** - Add gotchas to CLAUDE.md
 
 ---
 
-**See Also:**
-- [Planning Directory](planning/meta-agent/README.md)
-- [Prompt Examples](prompts/README.md)
-- [MCP Server Guide](configs/mcp/README.md)
+See [Claude Code docs](https://code.claude.com/docs/en/memory) for more details.

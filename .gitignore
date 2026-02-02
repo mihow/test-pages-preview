@@ -206,8 +206,23 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# CTO Sidekick specific
+# Project-specific
 config.yaml
 credentials/
 state/
 logs/
+data/
+
+# Claude Code local files (personal, not shared)
+CLAUDE.local.md
+*.local.md
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

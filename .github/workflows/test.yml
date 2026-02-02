@@ -1,60 +1,182 @@
-name: Test CTO Sidekick
+# CI/CD Pipeline for Python Project
+#
+# Runs on:
+#   - All pushes to main
+#   - All pull requests to main
+#
+# Jobs:
+#   - lint: Code quality checks (ruff)
+#   - test: Run test suite with coverage
+#   - typecheck: Static type checking (mypy)
+#   - build: Verify package builds correctly
+
+name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
+
+env:
+  PYTHON_VERSION: "3.12"
 
 jobs:
-  test:
+  # ===========================================================================
+  # Linting
+  # ===========================================================================
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v5
-      with:
-        enable-cache: true
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
 
-    - name: Install dependencies
-      run: |
-        uv pip install --system -e .
+      - name: Install dependencies
+        run: uv pip install --system ruff
 
-    - name: Run scheduler tests
-      run: |
-        python tests/test_scheduler.py
+      - name: Run ruff linter
+        run: ruff check src tests
 
-    - name: Run orchestrator integration tests
-      run: |
-        python tests/test_orchestrator.py
+      - name: Run ruff formatter check
+        run: ruff format --check src tests
 
-    - name: Run workflow tests (status updates, resumption, completion)
-      run: |
-        python tests/test_workflows.py
+  # ===========================================================================
+  # Testing
+  # ===========================================================================
+  test:
+    name: Test
+    runs-on: ubuntu-latest
 
-    - name: Verify project structure
-      run: |
-        test -f src/daemon.py
-        test -f src/scheduler.py
-        test -f src/sheets.py
-        test -f src/models.py
-        test -f config.yaml.example
-        echo "✅ All core files present"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Test imports
-      run: |
-        python -c "from src.models import Project, ProjectStatus; print('✅ Models import OK')"
-        python -c "from src.scheduler import Scheduler; print('✅ Scheduler import OK')"
-        python -c "from src.mocks import MockSheetsClient; print('✅ Mocks import OK')"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
 
-    - name: Validate config example
-      run: |
-        python -c "import yaml; yaml.safe_load(open('config.yaml.example')); print('✅ Config YAML valid')"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system -e ".[dev]"
+
+      - name: Run tests with coverage
+        run: |
+          pytest -v --cov=my_project --cov-report=xml --cov-report=term
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
+          verbose: true
+
+  # ===========================================================================
+  # Type Checking
+  # ===========================================================================
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system -e ".[dev]"
+
+      - name: Run mypy
+        run: mypy src
+
+  # ===========================================================================
+  # Build Verification
+  # ===========================================================================
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test, typecheck]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install build dependencies
+        run: uv pip install --system build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Verify package
+        run: |
+          uv pip install --system dist/*.whl
+          my-project --version
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  # ===========================================================================
+  # Docker Build (optional, runs only on main)
+  # ===========================================================================
+  docker:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: production
+          push: false
+          tags: my-project:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
