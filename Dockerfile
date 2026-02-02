@@ -28,13 +28,14 @@ WORKDIR /app
 # =============================================================================
 FROM base AS dependencies
 
-# Copy only dependency files first (for caching)
-COPY pyproject.toml ./
+# Copy files needed for build (pyproject.toml references README.md)
+COPY pyproject.toml README.md ./
+COPY src/ ./src/
 
 # Create virtual environment and install dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv venv /opt/venv && \
-    uv pip install --python=/opt/venv/bin/python -e .
+    uv pip install --python=/opt/venv/bin/python .
 
 # =============================================================================
 # Development stage: For local development with hot reload
@@ -45,13 +46,12 @@ FROM base AS development
 COPY --from=dependencies /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install dev dependencies
-COPY pyproject.toml ./
+# Copy source code (needed for editable install)
+COPY . .
+
+# Install dev dependencies as editable
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install -e ".[dev]"
-
-# Copy source code (will be overridden by volume mount in dev)
-COPY . .
 
 # Default command for development
 CMD ["pytest", "-v"]
