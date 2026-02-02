@@ -9,15 +9,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 
 class TestImports:
     """Verify all modules import without errors."""
 
     def test_package_imports(self) -> None:
         """Main package imports successfully."""
-        from my_project import Settings, Example, __version__
+        from my_project import Example, Settings, __version__
 
         assert __version__
         assert Settings
@@ -43,7 +41,7 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
         )
         assert result.returncode == 0, f"CLI failed: {result.stderr}"
         assert "my-project" in result.stdout.lower() or "version" in result.stdout.lower()
@@ -55,7 +53,7 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
         )
         assert result.returncode == 0, f"CLI failed: {result.stderr}"
         assert "success" in result.stdout.lower()
@@ -67,7 +65,7 @@ class TestCLI:
             capture_output=True,
             text=True,
             cwd=Path(__file__).parent.parent,
-            env={**dict(__import__("os").environ), "PYTHONPATH": "src"},
+            env={**dict(__import__("os").environ), "PYTHONPATH": "src"}, check=False,
         )
         assert result.returncode == 0
         assert "usage" in result.stdout.lower() or "help" in result.stdout.lower()

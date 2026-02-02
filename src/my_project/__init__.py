@@ -10,4 +10,4 @@ __author__ = "Your Name"  # TODO: Update author
 from my_project.config import Settings
 from my_project.models import Example
 
-__all__ = ["Settings", "Example", "__version__"]
+__all__ = ["Example", "Settings", "__version__"]

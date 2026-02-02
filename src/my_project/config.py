@@ -6,8 +6,8 @@ Uses Pydantic Settings for environment-based configuration with validation.
 
 from __future__ import annotations
 
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -40,10 +40,6 @@ class Settings(BaseSettings):
     # API settings (example)
     api_host: str = Field(default="0.0.0.0", description="API host")
     api_port: int = Field(default=8000, description="API port")
-
-    # External services (add your own)
-    # database_url: str = Field(default="sqlite:///app.db", description="Database URL")
-    # redis_url: str = Field(default="redis://localhost:6379", description="Redis URL")
 
     def ensure_directories(self) -> None:
         """Create necessary directories if they don't exist."""

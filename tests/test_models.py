@@ -4,8 +4,9 @@ Tests for data models.
 These tests verify the Pydantic models work correctly.
 """
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from my_project.models import Example, Result, Status
 

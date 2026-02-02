@@ -4,8 +4,9 @@ Tests for configuration management.
 These tests verify settings loading and environment handling.
 """
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 from my_project.config import Settings, get_settings
 

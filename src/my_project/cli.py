@@ -63,7 +63,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         return 1
 
 
-def cmd_info(args: argparse.Namespace) -> int:
+def cmd_info(_args: argparse.Namespace) -> int:
     """Handle the 'info' command."""
     settings = get_settings()
     print(f"Application: {settings.app_name}")

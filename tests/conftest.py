@@ -5,14 +5,12 @@ This file is automatically loaded by pytest and provides fixtures
 available to all test files.
 """
 
-import os
 from pathlib import Path
 
 import pytest
 
 from my_project.config import Settings
 from my_project.models import Example, Status
-
 
 # =============================================================================
 # Environment Fixtures
