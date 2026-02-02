@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from my_project.config import Settings
+from my_project.config import Settings, get_settings
 from my_project.models import Example, Status
 
 # =============================================================================
@@ -26,8 +26,6 @@ def clean_environment(monkeypatch: pytest.MonkeyPatch) -> None:
     environment variable leakage between tests.
     """
     # Clear any cached settings
-    from my_project.config import get_settings
-
     get_settings.cache_clear()
 
 
@@ -49,8 +47,6 @@ def test_settings(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Settings:
     monkeypatch.setenv("DEBUG", "true")
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
     monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
-
-    from my_project.config import get_settings
 
     get_settings.cache_clear()
     settings = get_settings()
@@ -104,7 +100,7 @@ def example_factory():
 @pytest.fixture
 def event_loop_policy():
     """Use default event loop policy for async tests."""
-    import asyncio
+    import asyncio  # noqa: PLC0415
 
     return asyncio.DefaultEventLoopPolicy()
 
