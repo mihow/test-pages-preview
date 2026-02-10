@@ -41,7 +41,8 @@ Run `make help` to see all available commands.
 
 1. **Monitor context usage** - Keep under 40% (80K/200K tokens) when possible
    - Check regularly with token counter
-   - Summarize, compact & commit work to reset context
+   - Prepare NEXT_SESSION_PROMPT.md as context approaches 40%
+   - Summarize, compact & commit work to reset context (reference filepaths and line numbers)
    - Use offset/limit when reading large files
 
 2. **Add learnings with references** - Document fixes with file:line references
@@ -75,6 +76,7 @@ def process(items: List[str], config: Optional[Dict[str, int]] = None) -> Tuple[
 - Use `list`, `dict`, `tuple`, `set` directly (not from `typing`)
 - Use `X | None` instead of `Optional[X]`
 - Use `X | Y` instead of `Union[X, Y]`
+- For typing-only imports (e.g., `Sequence`, `Callable`), use namespace: `typing.Sequence` not `from typing import Sequence`
 
 ## Think Holistically
 
@@ -89,7 +91,8 @@ Don't just fix symptoms. Understand the underlying architecture first.
 ## Development Best Practices
 
 - **Commit often** - Small, focused commits are easier to review and rollback
-- **Use `git add -p`** - Interactive staging to add only relevant changes
+- **Use Conventional Commits** - `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:` with optional scope: `fix(router): handle empty field`
+- **Stage only related changes** - Never use `git add -A` or `git add .` blindly. Use `git add -p` to selectively stage hunks. For agents: `printf 'y\nn\ny\n' | git add -p file.py`
 - **Use TDD** - Write tests first when possible
 - **Keep it simple** - Evaluate alternatives before complex solutions
 - **Measure twice, cut once** - Plan before implementing
@@ -111,6 +114,13 @@ Use subagents to reduce context usage and parallelize work:
 2. Main agent reviews and plans implementation steps
 3. Implementation subagent executes one step at a time
 4. Main agent reviews each step before proceeding
+
+## Writing Style
+
+When writing PR descriptions, comments, or documentation:
+- Use a measured, factual tone; describe actual changes rather than making broad claims
+- Avoid "comprehensive", "production-ready", "robust", "fully" unless objectively true
+- A sentence is preferred when a list will look cluttered
 
 ## Command Line Shortcuts
 
@@ -135,3 +145,20 @@ cat file.json | jq .              # Pretty print
 - Use `tmp_path` fixture for temporary test files
 - Always run `make ci` before committing - catches lint/format/type issues
 - After pushing workflow changes, check Actions tab for actual results
+
+### uv gotchas
+
+- `[project.optional-dependencies]` are extras, NOT dev deps. `uv sync` alone skips them. Use `uv sync --extra dev` (Makefile:35). Only `[tool.uv] dev-dependencies` are installed by default with `uv sync`.
+- Never set `UV_SYSTEM_PYTHON=1` alongside `uv sync`. `uv sync` creates a `.venv`; the env var tells `uv run` to bypass it. The two are mutually exclusive. (.github/workflows/test.yml)
+
+### Pyright (type checker)
+
+- Project uses pyright (not mypy). Pyright is the engine behind VS Code's Pylance, so CLI and editor results stay in sync.
+- Pyright handles `try/except ImportError` fallback patterns natively -- no `type: ignore` comments needed.
+- Pyright resolves packages from the venv more reliably than mypy.
+- Config: pyproject.toml `[tool.pyright]` (3 lines vs mypy's 24)
+
+### Debugging CI failures
+
+- `gh run view --log-failed` can return empty output. Use the API instead: `gh api repos/{owner}/{repo}/actions/runs/{run_id}/jobs` to get job IDs, then `gh api repos/{owner}/{repo}/actions/jobs/{job_id}/logs` for the full log.
+- A 12-second CI failure where install passes but the next step fails instantly usually means the tool binary isn't on PATH.
