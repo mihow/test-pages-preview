@@ -1,6 +1,6 @@
 [Skip to main content](#content-area)
 
-[Claude Code Docs home page![light logo](https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/logo/light.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=d535f2e20f53cd911acc59ad1b64b2e0)![dark logo](https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/logo/dark.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=28e49a2ffe69101f4aae9bfa70b393d0)](/docs)
+[Claude Code Docs home page![light logo](https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/logo/light.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=78fd01ff4f4340295a4f66e2ea54903c)![dark logo](https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/logo/dark.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=1298a0c3b3a1da603b190d0de0e31712)](/docs/en/overview)
 
 ![US](https://d3gk2c5xim1je2.cloudfront.net/flags/US.svg)
 
@@ -28,7 +28,7 @@ How Claude remembers your project
 
 * [Overview](/docs/en/overview)
 * [Quickstart](/docs/en/quickstart)
-* [Changelog](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)
+* [Changelog](/docs/en/changelog)
 
 ##### Core concepts
 
@@ -46,8 +46,7 @@ How Claude remembers your project
 * [Chrome extension (beta)](/docs/en/chrome)
 * [Visual Studio Code](/docs/en/vs-code)
 * [JetBrains IDEs](/docs/en/jetbrains)
-* [GitHub Actions](/docs/en/github-actions)
-* [GitLab CI/CD](/docs/en/gitlab-ci-cd)
+* Code review & CI/CD
 * [Claude Code in Slack](/docs/en/slack)
 
 On this page
@@ -99,7 +98,7 @@ Each Claude Code session begins with a fresh context window. Two mechanisms carr
 
 This page covers how to:
 
-* [Write and organize CLAUDE.md files](#claudemd-files)
+* [Write and organize CLAUDE.md files](#claude-md-files)
 * [Scope rules to specific file types](#organize-rules-with-clauderules) with `.claude/rules/`
 * [Configure auto memory](#auto-memory) so Claude takes notes automatically
 * [Troubleshoot](#troubleshoot-memory-issues) when instructions aren’t being followed
@@ -134,16 +133,15 @@ CLAUDE.md files can live in several locations, each with a different scope. More
 | **Managed policy** | • macOS: `/Library/Application Support/ClaudeCode/CLAUDE.md` • Linux and WSL: `/etc/claude-code/CLAUDE.md` • Windows: `C:\Program Files\ClaudeCode\CLAUDE.md` | Organization-wide instructions managed by IT/DevOps | Company coding standards, security policies, compliance requirements | All users in organization |
 | **Project instructions** | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Team-shared instructions for the project | Project architecture, coding standards, common workflows | Team members via source control |
 | **User instructions** | `~/.claude/CLAUDE.md` | Personal preferences for all projects | Code styling preferences, personal tooling shortcuts | Just you (all projects) |
-| **Local instructions** | `./CLAUDE.local.md` | Personal project-specific preferences, not checked into git | Your sandbox URLs, preferred test data | Just you (current project) |
 
-CLAUDE.md files in the directory hierarchy above the working directory are loaded in full at launch. CLAUDE.md files in subdirectories load on demand when Claude reads files in those directories. See [How CLAUDE.md files load](#how-claudemd-files-load) for the full resolution order.
+CLAUDE.md files in the directory hierarchy above the working directory are loaded in full at launch. CLAUDE.md files in subdirectories load on demand when Claude reads files in those directories. See [How CLAUDE.md files load](#how-claude-md-files-load) for the full resolution order.
 For large projects, you can break instructions into topic-specific files using [project rules](#organize-rules-with-clauderules). Rules let you scope instructions to specific file types or subdirectories.
 
 ### [​](#set-up-a-project-claude-md) Set up a project CLAUDE.md
 
 A project CLAUDE.md can be stored in either `./CLAUDE.md` or `./.claude/CLAUDE.md`. Create this file and add instructions that apply to anyone working on the project: build and test commands, coding standards, architectural decisions, naming conventions, and common workflows. These instructions are shared with your team through version control, so focus on project-level standards rather than personal preferences.
 
-Run `/init` to generate a starting CLAUDE.md automatically. Claude analyzes your codebase and creates a file with build commands, test instructions, and project conventions it discovers. If a CLAUDE.md already exists, `/init` suggests improvements rather than overwriting it. Refine from there with instructions Claude wouldn’t discover on its own.
+Run `/init` to generate a starting CLAUDE.md automatically. Claude analyzes your codebase and creates a file with build commands, test instructions, and project conventions it discovers. If a CLAUDE.md already exists, `/init` suggests improvements rather than overwriting it. Refine from there with instructions Claude wouldn’t discover on its own.Set `CLAUDE_CODE_NEW_INIT=true` to enable an interactive multi-phase flow. `/init` asks which artifacts to set up: CLAUDE.md files, skills, and hooks. It then explores your codebase with a subagent, fills in gaps via follow-up questions, and presents a reviewable proposal before writing any files.
 
 ### [​](#write-effective-instructions) Write effective instructions
 
@@ -156,7 +154,7 @@ CLAUDE.md files are loaded into the context window at the start of every session
 * “Run `npm test` before committing” instead of “Test your changes”
 * “API handlers live in `src/api/handlers/`” instead of “Keep files organized”
 
-**Consistency**: if two rules contradict each other, Claude may pick one arbitrarily. Review your CLAUDE.md files, nested CLAUDE.md files in subdirectories, and [`.claude/rules/`](#organize-rules-with-clauderules) periodically to remove outdated or conflicting instructions. In monorepos, use [`claudeMdExcludes`](#exclude-specific-claudemd-files) to skip CLAUDE.md files from other teams that aren’t relevant to your work.
+**Consistency**: if two rules contradict each other, Claude may pick one arbitrarily. Review your CLAUDE.md files, nested CLAUDE.md files in subdirectories, and [`.claude/rules/`](#organize-rules-with-clauderules) periodically to remove outdated or conflicting instructions. In monorepos, use [`claudeMdExcludes`](#exclude-specific-claude-md-files) to skip CLAUDE.md files from other teams that aren’t relevant to your work.
 
 ### [​](#import-additional-files) Import additional files
 
@@ -177,8 +175,7 @@ See @README for project overview and @package.json for available npm commands fo
 - git workflow @docs/git-instructions.md
 ```
 
-For private per-project preferences that shouldn’t be checked into version control, use `CLAUDE.local.md`: it is automatically loaded and added to `.gitignore`.
-If you work across multiple git worktrees, `CLAUDE.local.md` only exists in one. Use a home-directory import instead so all worktrees share the same personal instructions:
+For personal preferences you don’t want to check in, import a file from your home directory. The import goes in the shared CLAUDE.md, but the file it points to stays on your machine:
 
 Report incorrect code
 
@@ -197,9 +194,9 @@ For a more structured approach to organizing instructions, see [`.claude/rules/`
 
 ### [​](#how-claude-md-files-load) How CLAUDE.md files load
 
-Claude Code reads CLAUDE.md files by walking up the directory tree from your current working directory, checking each directory along the way for CLAUDE.md and CLAUDE.local.md files. This means if you run Claude Code in `foo/bar/`, it loads instructions from both `foo/bar/CLAUDE.md` and `foo/CLAUDE.md`.
+Claude Code reads CLAUDE.md files by walking up the directory tree from your current working directory, checking each directory along the way. This means if you run Claude Code in `foo/bar/`, it loads instructions from both `foo/bar/CLAUDE.md` and `foo/CLAUDE.md`.
 Claude also discovers CLAUDE.md files in subdirectories under your current working directory. Instead of loading them at launch, they are included when Claude reads files in those subdirectories.
-If you work in a large monorepo where other teams’ CLAUDE.md files get picked up, use [`claudeMdExcludes`](#exclude-specific-claudemd-files) to skip them.
+If you work in a large monorepo where other teams’ CLAUDE.md files get picked up, use [`claudeMdExcludes`](#exclude-specific-claude-md-files) to skip them.
 
 #### [​](#load-from-additional-directories) Load from additional directories
 
@@ -350,6 +347,20 @@ Deploy with your configuration management system
 
 Use MDM, Group Policy, Ansible, or similar tools to distribute the file across developer machines. See [managed settings](/docs/en/permissions#managed-settings) for other organization-wide configuration options.
 
+A managed CLAUDE.md and [managed settings](/docs/en/settings#settings-files) serve different purposes. Use settings for technical enforcement and CLAUDE.md for behavioral guidance:
+
+| Concern | Configure in |
+| --- | --- |
+| Block specific tools, commands, or file paths | Managed settings: `permissions.deny` |
+| Enforce sandbox isolation | Managed settings: `sandbox.enabled` |
+| Environment variables and API provider routing | Managed settings: `env` |
+| Authentication method and organization lock | Managed settings: `forceLoginMethod`, `forceLoginOrgUUID` |
+| Code style and quality guidelines | Managed CLAUDE.md |
+| Data handling and compliance reminders | Managed CLAUDE.md |
+| Behavioral instructions for Claude | Managed CLAUDE.md |
+
+Settings rules are enforced by the client regardless of what Claude decides to do. CLAUDE.md instructions shape Claude’s behavior but are not a hard enforcement layer.
+
 #### [​](#exclude-specific-claude-md-files) Exclude specific CLAUDE.md files
 
 In large monorepos, ancestor CLAUDE.md files may contain instructions that aren’t relevant to your work. The `claudeMdExcludes` setting lets you skip specific files by path or glob pattern.
@@ -378,6 +389,8 @@ Managed policy CLAUDE.md files cannot be excluded. This ensures organization-wid
 
 Auto memory lets Claude accumulate knowledge across sessions without you writing anything. Claude saves notes for itself as it works: build commands, debugging insights, architecture notes, code style preferences, and workflow habits. Claude doesn’t save something every session. It decides what’s worth remembering based on whether the information would be useful in a future conversation.
 
+Auto memory requires Claude Code v2.1.59 or later. Check your version with `claude --version`.
+
 ### [​](#enable-or-disable-auto-memory) Enable or disable auto memory
 
 Auto memory is on by default. To toggle it, open `/memory` in a session and use the auto memory toggle, or set `autoMemoryEnabled` in your project settings:
@@ -399,6 +412,21 @@ To disable auto memory via environment variable, set `CLAUDE_CODE_DISABLE_AUTO_M
 ### [​](#storage-location) Storage location
 
 Each project gets its own memory directory at `~/.claude/projects/<project>/memory/`. The `<project>` path is derived from the git repository, so all worktrees and subdirectories within the same repo share one auto memory directory. Outside a git repo, the project root is used instead.
+To store auto memory in a different location, set `autoMemoryDirectory` in your user or local settings:
+
+Report incorrect code
+
+Copy
+
+Ask AI
+
+```
+{
+  "autoMemoryDirectory": "~/my-custom-memory-dir"
+}
+```
+
+This setting is accepted from policy, local, and user settings. It is not accepted from project settings (`.claude/settings.json`) to prevent a shared project from redirecting auto memory writes to sensitive locations.
 The directory contains a `MEMORY.md` entrypoint and optional topic files:
 
 Report incorrect code
@@ -442,13 +470,15 @@ These are the most common issues with CLAUDE.md and auto memory, along with step
 
 ### [​](#claude-isn’t-following-my-claude-md) Claude isn’t following my CLAUDE.md
 
-CLAUDE.md is context, not enforcement. Claude reads it and tries to follow it, but there’s no guarantee of strict compliance, especially for vague or conflicting instructions.
+CLAUDE.md content is delivered as a user message after the system prompt, not as part of the system prompt itself. Claude reads it and tries to follow it, but there’s no guarantee of strict compliance, especially for vague or conflicting instructions.
 To debug:
 
 * Run `/memory` to verify your CLAUDE.md files are being loaded. If a file isn’t listed, Claude can’t see it.
-* Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claudemd-files)).
+* Check that the relevant CLAUDE.md is in a location that gets loaded for your session (see [Choose where to put CLAUDE.md files](#choose-where-to-put-claude-md-files)).
 * Make instructions more specific. “Use 2-space indentation” works better than “format code nicely.”
 * Look for conflicting instructions across CLAUDE.md files. If two files give different guidance for the same behavior, Claude may pick one arbitrarily.
+
+For instructions you want at the system prompt level, use [`--append-system-prompt`](/docs/en/cli-reference#system-prompt-flags). This must be passed every invocation, so it’s better suited to scripts and automation than interactive use.
 
 Use the [`InstructionsLoaded` hook](/docs/en/hooks#instructionsloaded) to log exactly which instruction files are loaded, when they load, and why. This is useful for debugging path-specific rules or lazy-loaded files in subdirectories.
 
@@ -481,7 +511,7 @@ YesNo
 
 ⌘I
 
-[Claude Code Docs home page![light logo](https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/logo/light.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=d535f2e20f53cd911acc59ad1b64b2e0)![dark logo](https://mintcdn.com/claude-code/TBPmHzr19mDCuhZi/logo/dark.svg?fit=max&auto=format&n=TBPmHzr19mDCuhZi&q=85&s=28e49a2ffe69101f4aae9bfa70b393d0)](/docs)
+[Claude Code Docs home page![light logo](https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/logo/light.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=78fd01ff4f4340295a4f66e2ea54903c)![dark logo](https://mintcdn.com/claude-code/c5r9_6tjPMzFdDDT/logo/dark.svg?fit=max&auto=format&n=c5r9_6tjPMzFdDDT&q=85&s=1298a0c3b3a1da603b190d0de0e31712)](/docs/en/overview)
 
 [x](https://x.com/AnthropicAI)[linkedin](https://www.linkedin.com/company/anthropicresearch)
 
@@ -499,7 +529,7 @@ Learn
 
 Terms and policies
 
-[Privacy policy](https://www.anthropic.com/legal/privacy)[Disclosure policy](https://www.anthropic.com/responsible-disclosure-policy)[Usage policy](https://www.anthropic.com/legal/aup)[Commercial terms](https://www.anthropic.com/legal/commercial-terms)[Consumer terms](https://www.anthropic.com/legal/consumer-terms)
+[Privacy choices](#)[Privacy policy](https://www.anthropic.com/legal/privacy)[Disclosure policy](https://www.anthropic.com/responsible-disclosure-policy)[Usage policy](https://www.anthropic.com/legal/aup)[Commercial terms](https://www.anthropic.com/legal/commercial-terms)[Consumer terms](https://www.anthropic.com/legal/consumer-terms)
 
 Assistant
 
